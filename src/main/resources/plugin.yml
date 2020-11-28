@@ -1,0 +1,7 @@
+name: CrystalBall
+version: 1.0.0
+main: gg.tgb.CrystalBall.CrystalBall
+description: Look into a Crystal Ball and watch your players
+api-version: 1.16
+author: tgb
+website: tgb.gg
