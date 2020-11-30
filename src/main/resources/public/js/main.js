@@ -115,7 +115,7 @@ window.onload = (() => {
 
 
     setInterval(function () {
-        fetch('http://192.168.86.36:25599/blocks')
+        fetch('/blocks')
             .then(response => response.json())
             .then(json => {
                 while (scene.children.length > 0) {
@@ -164,14 +164,13 @@ window.onload = (() => {
                     scene.add(cube);
                 });
             });
-
+        renderer.render(scene, camera);
     }, 10);
 
     function animate() {
 
         requestAnimationFrame(animate);
         controls.update();
-        renderer.render(scene, camera);
         stats.update();
 
     };

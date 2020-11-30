@@ -29,7 +29,9 @@ public class CrystalBall extends JavaPlugin implements Listener {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(Javalin.class.getClassLoader());
-        Javalin app = Javalin.create().start(25599);
+        Javalin app = Javalin.create(config -> {
+            config.enableCorsForAllOrigins();
+        }).start(25599);
         app.config.addStaticFiles("/public");
         app.get("/blocks", ctx -> {
 
@@ -54,7 +56,17 @@ public class CrystalBall extends JavaPlugin implements Listener {
                 blocksArray.add(jsonBlock);
             }
 
-            ctx.json(blocksArray);
+            JSONObject finalJSON = new JSONObject();
+
+            JSONObject playerJSON = new JSONObject();
+            playerJSON.put("x", playerPos.getX());
+            playerJSON.put("y", playerPos.getY());
+            playerJSON.put("z", playerPos.getZ());
+
+            finalJSON.put("blocks", blocksArray);
+            finalJSON.put("player", playerJSON);
+
+            ctx.json(finalJSON);
         });
         Thread.currentThread().setContextClassLoader(classLoader);
     }
@@ -73,20 +85,37 @@ public class CrystalBall extends JavaPlugin implements Listener {
             playerPos = event.getPlayer().getLocation();
 
             World pWorld = playerPos.getWorld();
-            double pX = playerPos.getX();
-            double pY = playerPos.getY();
-            double pZ = playerPos.getZ();
+            int pX = (int) playerPos.getX();
+            int pY = (int) playerPos.getY();
+            int pZ = (int) playerPos.getZ();
 
             ArrayList<Block> blocks = new ArrayList<Block>();
 
-            for(double x = pX-searchRadius; x < pX+searchRadius; x++) {
-                for(double y = pY-searchRadius; y < pY+searchRadius; y++) {
-                    for(double z = pZ-searchRadius; z < pZ+searchRadius; z++) {
+            for(int x = pX-searchRadius; x < pX+searchRadius; x++) {
+                for(int y = pY-searchRadius; y < pY+searchRadius; y++) {
+                    for(int z = pZ-searchRadius; z < pZ+searchRadius; z++) {
                         Block b = pWorld.getBlockAt(new Location(pWorld, x, y, z));
 
-                        if(!b.getType().equals(Material.AIR)) {
-                            blocks.add(b);
+                        if(b.getType().equals(Material.AIR) || b.getType().equals(Material.CAVE_AIR) || b.getType().equals(Material.VOID_AIR)) {
+                            continue;
                         }
+
+                        int airCount = 0;
+                        for(int nX = x-2; nX < x+2; nX++) {
+                            for(int nY = y-2; nY < y+2; nY++) {
+                                for(int nZ = z-2; nZ < z+2; nZ++) {
+                                    Block n = pWorld.getBlockAt(new Location(pWorld, nX, nY, nZ));
+                                    if(n.getType().equals(Material.AIR) || n.getType().equals(Material.CAVE_AIR)) {
+                                        airCount++;
+                                    }
+                                }
+                            }
+                        }
+                        if(airCount == 0) {
+                            continue;
+                        }
+
+                        blocks.add(b);
                     }
                 }
             }
