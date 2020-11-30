@@ -148,7 +148,7 @@ window.onload = (() => {
 
                 const playerGeometry = new THREE.BoxGeometry(1, 2, 1);
                 const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF}));
-                player.position.set(0, 0.5, 0);
+                player.position.set(0, 0.5, -1);
                 scene.add(player);
 
                 json.blocks.forEach(block => {

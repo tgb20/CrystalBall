@@ -105,7 +105,7 @@ public class CrystalBall extends JavaPlugin implements Listener {
                             for(int nY = y-2; nY < y+2; nY++) {
                                 for(int nZ = z-2; nZ < z+2; nZ++) {
                                     Block n = pWorld.getBlockAt(new Location(pWorld, nX, nY, nZ));
-                                    if(n.getType().equals(Material.AIR) || n.getType().equals(Material.CAVE_AIR)) {
+                                    if(n.getType().equals(Material.AIR)) {
                                         airCount++;
                                     }
                                 }
