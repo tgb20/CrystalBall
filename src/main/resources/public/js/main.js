@@ -136,7 +136,7 @@ window.onload = (() => {
 
 
     setInterval(function () {
-        fetch('/blocks')
+        fetch('http://tgbdev.dedimc.io:25599/blocks')
         .then(response => response.json())
         .then(json => {
             while (scene.children.length > 0) {
@@ -187,7 +187,7 @@ window.onload = (() => {
                 scene.add(cube);
             });
         });
-    }, 500);
+    }, 50);
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
