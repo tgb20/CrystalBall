@@ -16,17 +16,41 @@ window.onload = (() => {
     const textureLoader = new THREE.TextureLoader();
 
     const grassSide = textureLoader.load('textures/grass_side.png');
+    grassSide.minFilter = THREE.NearestFilter;
+    grassSide.magFilter = THREE.NearestFilter;
     const grassTop = textureLoader.load('textures/grass_top.png');
+    grassTop.minFilter = THREE.NearestFilter;
+    grassTop.magFilter = THREE.NearestFilter;
     const dirt = textureLoader.load('textures/dirt.png');
+    dirt.minFilter = THREE.NearestFilter;
+    dirt.magFilter = THREE.NearestFilter;
     const missing = textureLoader.load('textures/missing.png');
+    missing.minFilter = THREE.NearestFilter;
+    missing.magFilter = THREE.NearestFilter;
     const oakLogTop = textureLoader.load('textures/oak_log_top.png');
+    oakLogTop.minFilter = THREE.NearestFilter;
+    oakLogTop.magFilter = THREE.NearestFilter;
     const oakLogSide = textureLoader.load('textures/oak_log.png');
+    oakLogSide.minFilter = THREE.NearestFilter;
+    oakLogSide.magFilter = THREE.NearestFilter;
     const birchLeaves = textureLoader.load('textures/birch_leaves.png');
+    birchLeaves.minFilter = THREE.NearestFilter;
+    birchLeaves.magFilter = THREE.NearestFilter;
     const oakLeaves = textureLoader.load('textures/oak_leaves.png');
+    oakLeaves.minFilter = THREE.NearestFilter;
+    oakLeaves.magFilter = THREE.NearestFilter;
     const birchLogTop = textureLoader.load('textures/birch_log_top.png');
+    birchLogTop.minFilter = THREE.NearestFilter;
+    birchLogTop.magFilter = THREE.NearestFilter;
     const birchLogSide = textureLoader.load('textures/birch_log.png');
+    birchLogSide.minFilter = THREE.NearestFilter;
+    birchLogSide.magFilter = THREE.NearestFilter;
     const stone = textureLoader.load('textures/stone.png');
+    stone.minFilter = THREE.NearestFilter;
+    stone.magFilter = THREE.NearestFilter;
     const water = textureLoader.load('textures/water.png');
+    water.minFilter = THREE.NearestFilter;
+    water.magFilter = THREE.NearestFilter;
 
     const missingMaterial = [
         new THREE.MeshBasicMaterial({ map: missing }), // SIDE
@@ -65,21 +89,21 @@ window.onload = (() => {
     ];
 
     const birchLeavesMaterial = [
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }), // TOP
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }), // BOTTOM
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves }) // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }), // TOP
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }), // BOTTOM
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x80a755, map: birchLeaves, transparent: true }) // SIDE
     ];
 
     const oakLeavesMaterial = [
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }), // TOP
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }), // BOTTOM
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }), // SIDE
-        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves }) // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }), // TOP
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }), // BOTTOM
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }), // SIDE
+        new THREE.MeshBasicMaterial({ color: 0x55C93F, map: oakLeaves, transparent: true }) // SIDE
     ];
 
     const birchLogMaterial = [
@@ -115,7 +139,7 @@ window.onload = (() => {
 
 
     setInterval(function () {
-        fetch('/blocks')
+        fetch('http://tgbdev.dedimc.io:25599/blocks')
             .then(response => response.json())
             .then(json => {
                 while (scene.children.length > 0) {
