@@ -139,7 +139,7 @@ window.onload = (() => {
 
 
     setInterval(function () {
-        fetch('http://tgbdev.dedimc.io:25599/blocks')
+        fetch('/blocks')
             .then(response => response.json())
             .then(json => {
                 while (scene.children.length > 0) {
