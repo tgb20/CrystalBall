@@ -10,9 +10,6 @@ window.onload = (() => {
 
     const controls = new THREE.OrbitControls(camera);
 
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-
-
     const textureLoader = new THREE.TextureLoader();
 
     const grassSide = textureLoader.load('textures/grass_side.png');
@@ -140,63 +137,62 @@ window.onload = (() => {
 
     setInterval(function () {
         fetch('/blocks')
-            .then(response => response.json())
-            .then(json => {
-                while (scene.children.length > 0) {
-                    scene.remove(scene.children[0]);
+        .then(response => response.json())
+        .then(json => {
+            while (scene.children.length > 0) {
+                let child = scene.children[0];
+                scene.remove(child);
+            }
+
+            const playerGeometry = new THREE.BoxBufferGeometry(1, 2, 1);
+            const baseGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+            const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF}));
+            player.position.set(0, 0.5, -1);
+            scene.add(player);
+
+            json.blocks.forEach(block => {
+
+                let cube;
+
+                switch (block.type) {
+                    case 'GRASS_BLOCK':
+                        cube = new THREE.Mesh(baseGeometry, grassMaterial);
+                        break;
+                    case 'DIRT':
+                        cube = new THREE.Mesh(baseGeometry, dirtMaterial);
+                        break;
+                    case 'OAK_LOG':
+                        cube = new THREE.Mesh(baseGeometry, oakLogMaterial);
+                        break;
+                    case 'BIRCH_LEAVES':
+                        cube = new THREE.Mesh(baseGeometry, birchLeavesMaterial);
+                        break;
+                    case 'OAK_LEAVES':
+                        cube = new THREE.Mesh(baseGeometry, oakLeavesMaterial);
+                        break;
+                    case 'BIRCH_LOG':
+                        cube = new THREE.Mesh(baseGeometry, birchLogMaterial);
+                        break;
+                    case 'STONE':
+                        cube = new THREE.Mesh(baseGeometry, stoneMaterial);
+                        break;
+                    case 'WATER':
+                        cube = new THREE.Mesh(baseGeometry, waterMaterial);
+                        break;
+                    default:
+                        cube = new THREE.Mesh(baseGeometry, missingMaterial);
+                        break;
                 }
-
-                const playerGeometry = new THREE.BoxGeometry(1, 2, 1);
-                const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF}));
-                player.position.set(0, 0.5, 0);
-                scene.add(player);
-
-                json.blocks.forEach(block => {
-
-                    let cube;
-
-                    switch (block.type) {
-                        case 'GRASS_BLOCK':
-                            cube = new THREE.Mesh(geometry, grassMaterial);
-                            break;
-                        case 'DIRT':
-                            cube = new THREE.Mesh(geometry, dirtMaterial);
-                            break;
-                        case 'OAK_LOG':
-                            cube = new THREE.Mesh(geometry, oakLogMaterial);
-                            break;
-                        case 'BIRCH_LEAVES':
-                            cube = new THREE.Mesh(geometry, birchLeavesMaterial);
-                            break;
-                        case 'OAK_LEAVES':
-                            cube = new THREE.Mesh(geometry, oakLeavesMaterial);
-                            break;
-                        case 'BIRCH_LOG':
-                            cube = new THREE.Mesh(geometry, birchLogMaterial);
-                            break;
-                        case 'STONE':
-                            cube = new THREE.Mesh(geometry, stoneMaterial);
-                            break;
-                        case 'WATER':
-                            cube = new THREE.Mesh(geometry, waterMaterial);
-                            break;
-                        default:
-                            cube = new THREE.Mesh(geometry, missingMaterial);
-                            break;
-                    }
-                    cube.position.set(-block.x, -block.y, -block.z);
-                    scene.add(cube);
-                });
+                cube.position.set(-block.x, -block.y, -block.z);
+                scene.add(cube);
             });
-        renderer.render(scene, camera);
-    }, 10);
-
+        });
+    }, 500);
     function animate() {
-
         requestAnimationFrame(animate);
         controls.update();
         stats.update();
-
+        renderer.render(scene, camera);
     };
 
     animate();
