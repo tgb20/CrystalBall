@@ -144,50 +144,26 @@ window.onload = (() => {
                 scene.remove(child);
             }
 
+            const blocks = json.blocks;
+
             const playerGeometry = new THREE.BoxBufferGeometry(1, 2, 1);
             const baseGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
             const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF}));
             player.position.set(0, 0.5, -1);
             scene.add(player);
 
-            json.blocks.forEach(block => {
+            let instancedGrass = new THREE.InstancedMesh(baseGeometry, grassMaterial, blocks.length);
 
-                let cube;
+            const matrix = new THREE.Matrix4();
 
-                switch (block.type) {
-                    case 'GRASS_BLOCK':
-                        cube = new THREE.Mesh(baseGeometry, grassMaterial);
-                        break;
-                    case 'DIRT':
-                        cube = new THREE.Mesh(baseGeometry, dirtMaterial);
-                        break;
-                    case 'OAK_LOG':
-                        cube = new THREE.Mesh(baseGeometry, oakLogMaterial);
-                        break;
-                    case 'BIRCH_LEAVES':
-                        cube = new THREE.Mesh(baseGeometry, birchLeavesMaterial);
-                        break;
-                    case 'OAK_LEAVES':
-                        cube = new THREE.Mesh(baseGeometry, oakLeavesMaterial);
-                        break;
-                    case 'BIRCH_LOG':
-                        cube = new THREE.Mesh(baseGeometry, birchLogMaterial);
-                        break;
-                    case 'STONE':
-                        cube = new THREE.Mesh(baseGeometry, stoneMaterial);
-                        break;
-                    case 'WATER':
-                        cube = new THREE.Mesh(baseGeometry, waterMaterial);
-                        break;
-                    default:
-                        cube = new THREE.Mesh(baseGeometry, missingMaterial);
-                        break;
-                }
-                cube.position.set(-block.x, -block.y, -block.z);
-                scene.add(cube);
-            });
+            for(let i = 0; i < blocks.length; i++) {
+                matrix.setPosition(-blocks[i].x, -blocks[i].y, -blocks[i].z);
+                instancedGrass.setMatrixAt(i, matrix);
+            }
+
+            scene.add(instancedGrass);
         });
-    }, 50);
+    }, 10);
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
