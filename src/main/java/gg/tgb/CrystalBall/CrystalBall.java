@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class CrystalBall extends JavaPlugin implements Listener {
 
 
-    private int searchRadius = 10;
+    private int searchRadius = 30;
 
-    private Block[] blockList;
+    private Block[] blockList = new Block[0];
     private Location playerPos;
 
     @Override
@@ -31,12 +31,10 @@ public class CrystalBall extends JavaPlugin implements Listener {
         Thread.currentThread().setContextClassLoader(Javalin.class.getClassLoader());
         Javalin app = Javalin.create(config -> {
             config.enableCorsForAllOrigins();
-        }).start(25599);
+        }).start(25569);
         app.config.addStaticFiles("/public");
         app.get("/blocks", ctx -> {
-
-
-            JSONArray blocksArray = new JSONArray();
+            JSONObject blocks = new JSONObject();
 
             for(int i = 0; i < blockList.length; i++) {
                 Block b = blockList[i];
@@ -46,25 +44,27 @@ public class CrystalBall extends JavaPlugin implements Listener {
                 int y = (int) playerPos.getY() - b.getY();
                 int z = (int) playerPos.getZ() - b.getZ();
 
-                JSONObject jsonBlock = new JSONObject();
 
-                jsonBlock.put("type", type);
-                jsonBlock.put("x", x);
-                jsonBlock.put("y", y);
-                jsonBlock.put("z", z);
-
-                blocksArray.add(jsonBlock);
+                if(blocks.containsKey(type)) {
+                    JSONObject block = new JSONObject();
+                    block.put("x", x);
+                    block.put("y", y);
+                    block.put("z", z);
+                    JSONArray arr = (JSONArray) blocks.get(type);
+                    arr.add(block);
+                } else {
+                    JSONArray newTypeArray = new JSONArray();
+                    JSONObject block = new JSONObject();
+                    block.put("x", x);
+                    block.put("y", y);
+                    block.put("z", z);
+                    newTypeArray.add(block);
+                    blocks.put(type, newTypeArray);
+                }
             }
 
             JSONObject finalJSON = new JSONObject();
-
-            JSONObject playerJSON = new JSONObject();
-            playerJSON.put("x", playerPos.getX());
-            playerJSON.put("y", playerPos.getY());
-            playerJSON.put("z", playerPos.getZ());
-
-            finalJSON.put("blocks", blocksArray);
-            finalJSON.put("player", playerJSON);
+            finalJSON.put("blocks", blocks);
 
             ctx.json(finalJSON);
         });
@@ -105,7 +105,7 @@ public class CrystalBall extends JavaPlugin implements Listener {
                             for(int nY = y-2; nY < y+2; nY++) {
                                 for(int nZ = z-2; nZ < z+2; nZ++) {
                                     Block n = pWorld.getBlockAt(new Location(pWorld, nX, nY, nZ));
-                                    if(n.getType().equals(Material.AIR)) {
+                                    if(n.getType().equals(Material.AIR) || n.getType().equals(Material.CAVE_AIR)) {
                                         airCount++;
                                     }
                                 }

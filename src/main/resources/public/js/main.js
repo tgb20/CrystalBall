@@ -136,7 +136,7 @@ window.onload = (() => {
 
 
     setInterval(function () {
-        fetch('http://tgbdev.dedimc.io:25599/blocks')
+        fetch('/blocks')
         .then(response => response.json())
         .then(json => {
             while (scene.children.length > 0) {
@@ -152,16 +152,51 @@ window.onload = (() => {
             player.position.set(0, 0.5, -1);
             scene.add(player);
 
-            let instancedGrass = new THREE.InstancedMesh(baseGeometry, grassMaterial, blocks.length);
+            Object.keys(blocks).forEach(blockType => {
 
-            const matrix = new THREE.Matrix4();
+                let blocksOfType = blocks[blockType];
 
-            for(let i = 0; i < blocks.length; i++) {
-                matrix.setPosition(-blocks[i].x, -blocks[i].y, -blocks[i].z);
-                instancedGrass.setMatrixAt(i, matrix);
-            }
+                let mat = new THREE.MeshBasicMaterial();
+                switch (blockType) {
+                    case 'GRASS_BLOCK':
+                        mat = grassMaterial;
+                        break;
+                    case 'DIRT':
+                        mat = dirtMaterial;
+                        break;
+                    case 'OAK_LOG':
+                        mat = oakLogMaterial;
+                        break;
+                    case 'BIRCH_LEAVES':
+                        mat = birchLeavesMaterial;
+                        break;
+                    case 'OAK_LEAVES':
+                        mat = oakLeavesMaterial;
+                        break;
+                    case 'BIRCH_LOG':
+                        mat = birchLogMaterial;
+                        break;
+                    case 'STONE':
+                        mat = stoneMaterial;
+                        break;
+                    case 'WATER':
+                        mat = waterMaterial;
+                        break;
+                    default:
+                        mat = missingMaterial;
+                        break;
+                }
 
-            scene.add(instancedGrass);
+                let instanceBlock = new THREE.InstancedMesh(baseGeometry, mat, blocksOfType.length);
+                const matrix = new THREE.Matrix4();
+
+                for(let i = 0; i < blocksOfType.length; i++) {
+                    matrix.setPosition(-blocksOfType[i].x, -blocksOfType[i].y, -blocksOfType[i].z);
+                    instanceBlock.setMatrixAt(i, matrix);
+                }
+    
+                scene.add(instanceBlock);
+            });
         });
     }, 10);
     function animate() {
