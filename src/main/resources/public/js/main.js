@@ -132,13 +132,22 @@ window.onload = (() => {
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x36c7f2, 1);
     document.body.appendChild(renderer.domElement);
 
+    let webSocket = new WebSocket("ws://" + location.host + "/ws/");
 
-    setInterval(function () {
-        fetch('/blocks')
-        .then(response => response.json())
-        .then(json => {
+    webSocket.onopen = ((event) => {
+
+        console.log('Connected to WebSocket!');
+
+        webSocket.onclose = ((event) => {
+            console.log('Disconnected from WebSocket!');
+        });
+
+        webSocket.onmessage = ((message) => {
+            let json = JSON.parse(message.data);
+
             while (scene.children.length > 0) {
                 let child = scene.children[0];
                 scene.remove(child);
@@ -148,7 +157,7 @@ window.onload = (() => {
 
             const playerGeometry = new THREE.BoxBufferGeometry(1, 2, 1);
             const baseGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
-            const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF}));
+            const player = new THREE.Mesh(playerGeometry, new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
             player.position.set(0, 0.5, -1);
             scene.add(player);
 
@@ -190,15 +199,16 @@ window.onload = (() => {
                 let instanceBlock = new THREE.InstancedMesh(baseGeometry, mat, blocksOfType.length);
                 const matrix = new THREE.Matrix4();
 
-                for(let i = 0; i < blocksOfType.length; i++) {
+                for (let i = 0; i < blocksOfType.length; i++) {
                     matrix.setPosition(-blocksOfType[i].x, -blocksOfType[i].y, -blocksOfType[i].z);
                     instanceBlock.setMatrixAt(i, matrix);
                 }
-    
+
                 scene.add(instanceBlock);
             });
         });
-    }, 10);
+    });
+
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
